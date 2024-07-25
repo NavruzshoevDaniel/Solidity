@@ -45,7 +45,7 @@ describe("TMoney", function () {
   });
 
   describe("Approvals", function () {
-it("Should approve an account to transfer funds", async function () {
+    it("Should approve an account to transfer funds", async function () {
       const {tmoney, owner, account1} = await loadFixture(deployTMoneyFixture);
 
       await tmoney.connect(owner).approve(account1.address, BigInt(100));
@@ -99,6 +99,39 @@ it("Should approve an account to transfer funds", async function () {
 
       await expect(tmoney.connect(account1).transferFrom(owner.address, account2.address, BigInt(100)))
       .to.be.revertedWith("Not approved");
+    });
+  });
+
+  describe("Decimals", function () {
+    it("Should return the right number of decimals", async function () {
+      const {tmoney} = await loadFixture(deployTMoneyFixture);
+
+      expect(await tmoney.decimals()).to.equal(18);
+    });
+  });
+
+  describe("Name", function () {
+    it("Should return the right name", async function () {
+      const {tmoney} = await loadFixture(deployTMoneyFixture);
+
+      expect(await tmoney.name()).to.equal("TMoney");
+    });
+  });
+
+  describe("Symbol", function () {
+    it("Should return the right symbol", async function () {
+      const {tmoney} = await loadFixture(deployTMoneyFixture);
+
+      expect(await tmoney.symbol()).to.equal("TMNY");
+    });
+  });
+
+  describe("Allowance", function () {
+    it("Should return the right allowance", async function () {
+      const {tmoney, owner, account1} = await loadFixture(deployTMoneyFixture);
+
+      await tmoney.connect(owner).approve(account1.address, BigInt(100));
+      expect(await tmoney.allowance(owner.address, account1.address)).to.equal(BigInt(100));
     });
   });
 });
