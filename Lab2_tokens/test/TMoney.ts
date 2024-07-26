@@ -2,11 +2,14 @@ import {loadFixture,} from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import {expect} from "chai";
 import hre from "hardhat";
 
+const ZERO_ADDRESS = "0x" + "0".repeat(40);
+const INITIAL_SUPPLY = BigInt(51995716056975351);
+
 describe("TMoney", function () {
   async function deployTMoneyFixture() {
     const [owner, account1, account2] = await hre.ethers.getSigners();
     const TMoney = await hre.ethers.getContractFactory("TMoney");
-    const tmoney = await TMoney.connect(owner).deploy(BigInt(51995716056975351));
+    const tmoney = await TMoney.connect(owner).deploy(INITIAL_SUPPLY);
     return {tmoney, owner, account1, account2};
   }
 
@@ -14,8 +17,8 @@ describe("TMoney", function () {
     it("Should set the right initial balance and total supply", async function () {
       const {tmoney, owner} = await loadFixture(deployTMoneyFixture);
 
-      expect(await tmoney.totalSupply()).to.equal(BigInt(51995716056975351));
-      expect(await tmoney.balanceOf(owner.address)).to.equal(BigInt(51995716056975351));
+      expect(await tmoney.totalSupply()).to.equal(INITIAL_SUPPLY);
+      expect(await tmoney.balanceOf(owner.address)).to.equal(INITIAL_SUPPLY);
     });
   });
 
@@ -35,13 +38,26 @@ describe("TMoney", function () {
       .withArgs(owner.address, account1.address, BigInt(100));
     });
 
+    it("Should transfer the funds with zero amount", async function () {
+      const {tmoney, owner, account1} = await loadFixture(deployTMoneyFixture);
+
+      await tmoney.connect(owner).transfer(account1.address, BigInt(0));
+      expect(await tmoney.balanceOf(account1.address)).to.equal(BigInt(0));
+    });
+
     it("Should fail if the sender doesn't have enough funds", async function () {
       const {tmoney, owner, account1} = await loadFixture(deployTMoneyFixture);
 
       await expect(tmoney.connect(account1).transfer(owner.address, BigInt(1000)))
-      .to.be.revertedWith("Insufficient balance");
+      .to.be.revertedWithCustomError(tmoney, "ERC20InsufficientBalance");
     });
 
+    it("Should fail if recipient is zero address", async function () {
+      const {tmoney, owner} = await loadFixture(deployTMoneyFixture);
+
+      await expect(tmoney.connect(owner).transfer(ZERO_ADDRESS, BigInt(100)))
+      .to.be.revertedWithCustomError(tmoney, "ERC20InvalidReceiver");
+    });
   });
 
   describe("Approvals", function () {
@@ -65,6 +81,13 @@ describe("TMoney", function () {
 
       await expect(tmoney.connect(account1).approve(owner.address, BigInt(1000)))
       .to.be.not.revertedWithoutReason();
+    });
+
+    it("Should fail if spender is zero address", async function () {
+      const {tmoney, owner} = await loadFixture(deployTMoneyFixture);
+
+      await expect(tmoney.connect(owner).approve(ZERO_ADDRESS, BigInt(100)))
+      .to.be.revertedWithCustomError(tmoney, "ERC20InvalidSpender");
     });
   });
 
@@ -91,14 +114,22 @@ describe("TMoney", function () {
 
       await tmoney.connect(account1).approve(owner.address, BigInt(100));
       await expect(tmoney.connect(owner).transferFrom(account1.address, account2.address, BigInt(1000)))
-      .to.be.revertedWith("Insufficient balance");
+      .to.be.revertedWithCustomError(tmoney, "ERC20InsufficientBalance");
     });
 
     it("Should fail if the sender is not approved", async function () {
       const {tmoney, owner, account1, account2} = await loadFixture(deployTMoneyFixture);
 
       await expect(tmoney.connect(account1).transferFrom(owner.address, account2.address, BigInt(100)))
-      .to.be.revertedWith("Not approved");
+      .to.be.revertedWithCustomError(tmoney, "ERC20InsufficientAllowance");
+    });
+
+    it("Should fail if recipient is zero address", async function () {
+      const {tmoney, owner, account1} = await loadFixture(deployTMoneyFixture);
+
+      await tmoney.connect(owner).approve(account1.address, BigInt(100));
+      await expect(tmoney.connect(account1).transferFrom(owner.address, ZERO_ADDRESS, BigInt(100)))
+      .to.be.revertedWithCustomError(tmoney, "ERC20InvalidReceiver");
     });
   });
 
@@ -132,6 +163,63 @@ describe("TMoney", function () {
 
       await tmoney.connect(owner).approve(account1.address, BigInt(100));
       expect(await tmoney.allowance(owner.address, account1.address)).to.equal(BigInt(100));
+    });
+  });
+
+  describe("Minting", function () {
+    it("Should mint new tokens", async function () {
+      const {tmoney, owner} = await loadFixture(deployTMoneyFixture);
+
+      await tmoney.connect(owner).mint(owner.address, BigInt(100));
+      expect(await tmoney.balanceOf(owner.address)).to.equal(INITIAL_SUPPLY + BigInt(100));
+      expect(await tmoney.totalSupply()).to.equal(BigInt(INITIAL_SUPPLY + BigInt(100)));
+    });
+
+    it("Should mint new tokens and emit event", async function () {
+      const {tmoney, owner} = await loadFixture(deployTMoneyFixture);
+
+      await expect(tmoney.connect(owner).mint(owner.address, BigInt(100)))
+      .to.emit(tmoney, "Transfer")
+      .withArgs(ZERO_ADDRESS, owner.address, BigInt(100));
+    });
+
+    it("Should fail if the sender is not the owner", async function () {
+      const {tmoney, account1} = await loadFixture(deployTMoneyFixture);
+
+      await expect(tmoney.connect(account1).mint(account1.address, BigInt(100)))
+      .to.be.revertedWithCustomError(tmoney, "OwnableUnauthorizedAccount");
+    });
+
+    it("Should fail if the recipient is zero address", async function () {
+      const {tmoney, owner} = await loadFixture(deployTMoneyFixture);
+
+      await expect(tmoney.connect(owner).mint(ZERO_ADDRESS, BigInt(100)))
+      .to.be.revertedWithCustomError(tmoney, "ERC20InvalidReceiver");
+    });
+  });
+
+  describe("Burning", function () {
+    it("Should burn tokens", async function () {
+      const {tmoney, owner} = await loadFixture(deployTMoneyFixture);
+
+      await tmoney.connect(owner).burn(BigInt(100));
+      expect(await tmoney.balanceOf(owner.address)).to.equal(INITIAL_SUPPLY - BigInt(100));
+      expect(await tmoney.totalSupply()).to.equal(BigInt(INITIAL_SUPPLY - BigInt(100)));
+    });
+
+    it("Should burn tokens and emit event", async function () {
+      const {tmoney, owner} = await loadFixture(deployTMoneyFixture);
+
+      await expect(tmoney.connect(owner).burn(BigInt(100)))
+      .to.emit(tmoney, "Transfer")
+      .withArgs(owner.address, ZERO_ADDRESS, BigInt(100));
+    });
+
+    it("Should fail if the sender doesn't have enough funds", async function () {
+      const {tmoney, account1} = await loadFixture(deployTMoneyFixture);
+
+      await expect(tmoney.connect(account1).burn(BigInt(1000)))
+      .to.be.revertedWithCustomError(tmoney, "ERC20InsufficientBalance");
     });
   });
 });
