@@ -12,7 +12,7 @@ contract TMoney is IERC20, Ownable {
 
     uint256 public totalSupply;
     mapping(address => uint256) public balanceOf;
-    mapping(address => mapping(address => uint256)) public allowances;
+    mapping(address => mapping(address => uint256)) internal allowances;
 
     constructor(uint256 initialTotalSupply) Ownable(msg.sender) {
         totalSupply = initialTotalSupply;
