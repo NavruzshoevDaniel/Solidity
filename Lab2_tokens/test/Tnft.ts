@@ -46,9 +46,10 @@ describe("Tnft", function () {
     it("Should fail if recipient is zero address", async function () {
       const { tnft, owner } = await loadFixture(deployTnftFixture);
 
-      await expect(
-        tnft.connect(owner).mint(ZERO_ADDRESS, BigInt(1))
-      ).to.be.revertedWithCustomError(tnft, "ERC721InvalidReceiver");
+      await expect(tnft.connect(owner).mint(ZERO_ADDRESS, BigInt(1))).to.be.revertedWithCustomError(
+        tnft,
+        "ERC721InvalidReceiver",
+      );
     });
 
     it("Should fail if the token already exists", async function () {
@@ -56,7 +57,7 @@ describe("Tnft", function () {
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await expect(
-        tnft.connect(owner).mint(owner.address, BigInt(1))
+        tnft.connect(owner).mint(owner.address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721ExistingToken");
     });
 
@@ -64,7 +65,7 @@ describe("Tnft", function () {
       const { tnft, account1 } = await loadFixture(deployTnftFixture);
 
       await expect(
-        tnft.connect(account1).mint(account1.address, BigInt(1))
+        tnft.connect(account1).mint(account1.address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "OwnableUnauthorizedAccount");
     });
   });
@@ -90,18 +91,20 @@ describe("Tnft", function () {
     it("Should fail if the token does not exist", async function () {
       const { tnft, owner } = await loadFixture(deployTnftFixture);
 
-      await expect(
-        tnft.connect(owner).burn(BigInt(1))
-      ).to.be.revertedWithCustomError(tnft, "ERC721NonexistentToken");
+      await expect(tnft.connect(owner).burn(BigInt(1))).to.be.revertedWithCustomError(
+        tnft,
+        "ERC721NonexistentToken",
+      );
     });
 
     it("Should fail if the sender is not the owner", async function () {
       const { tnft, owner, account1 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(account1.address, BigInt(1));
-      await expect(
-        tnft.connect(account1).burn(BigInt(1))
-      ).to.be.revertedWithCustomError(tnft, "OwnableUnauthorizedAccount");
+      await expect(tnft.connect(account1).burn(BigInt(1))).to.be.revertedWithCustomError(
+        tnft,
+        "OwnableUnauthorizedAccount",
+      );
     });
   });
 
@@ -127,18 +130,16 @@ describe("Tnft", function () {
       const { tnft, owner, account1 } = await loadFixture(deployTnftFixture);
 
       await expect(
-        tnft.connect(owner).approve(account1.address, BigInt(1))
+        tnft.connect(owner).approve(account1.address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721NonexistentToken");
     });
 
     it("Should fail if the sender is not the owner", async function () {
-      const { tnft, owner, account1, account2 } = await loadFixture(
-        deployTnftFixture
-      );
+      const { tnft, owner, account1, account2 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await expect(
-        tnft.connect(account1).approve(account2.address, BigInt(1))
+        tnft.connect(account1).approve(account2.address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721InvalidOwner");
     });
 
@@ -147,7 +148,7 @@ describe("Tnft", function () {
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await expect(
-        tnft.connect(owner).approve(ZERO_ADDRESS, BigInt(1))
+        tnft.connect(owner).approve(ZERO_ADDRESS, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721InvalidReceiver");
     });
 
@@ -156,26 +157,22 @@ describe("Tnft", function () {
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await expect(
-        tnft.connect(owner).approve(owner.address, BigInt(1))
+        tnft.connect(owner).approve(owner.address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721InvalidReceiver");
     });
 
     it("Should fail if sender has been approved", async function () {
-      const { tnft, owner, account1, account2 } = await loadFixture(
-        deployTnftFixture
-      );
+      const { tnft, owner, account1, account2 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await tnft.connect(owner).approve(account1.address, BigInt(1));
       await expect(
-        tnft.connect(account1).approve(account2.address, BigInt(1))
+        tnft.connect(account1).approve(account2.address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721InvalidOwner");
     });
 
     it("Should pass if sender has operatorApprovals", async function () {
-      const { tnft, owner, account1, account2 } = await loadFixture(
-        deployTnftFixture
-      );
+      const { tnft, owner, account1, account2 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await tnft.connect(owner).setApprovalForAll(account1.address, true);
@@ -189,8 +186,7 @@ describe("Tnft", function () {
       const { tnft, owner, account1 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).setApprovalForAll(account1.address, true);
-      expect(await tnft.isApprovedForAll(owner.address, account1.address)).to.be
-        .true;
+      expect(await tnft.isApprovedForAll(owner.address, account1.address)).to.be.true;
     });
 
     it("Should revoke operator approvals", async function () {
@@ -198,16 +194,13 @@ describe("Tnft", function () {
 
       await tnft.connect(owner).setApprovalForAll(account1.address, true);
       await tnft.connect(owner).setApprovalForAll(account1.address, false);
-      expect(await tnft.isApprovedForAll(owner.address, account1.address)).to.be
-        .false;
+      expect(await tnft.isApprovedForAll(owner.address, account1.address)).to.be.false;
     });
 
     it("Should set operator approvals and emit event", async function () {
       const { tnft, owner, account1 } = await loadFixture(deployTnftFixture);
 
-      await expect(
-        tnft.connect(owner).setApprovalForAll(account1.address, true)
-      )
+      await expect(tnft.connect(owner).setApprovalForAll(account1.address, true))
         .to.emit(tnft, "ApprovalForAll")
         .withArgs(owner.address, account1.address, true);
     });
@@ -216,35 +209,30 @@ describe("Tnft", function () {
       const { tnft, owner } = await loadFixture(deployTnftFixture);
 
       await expect(
-        tnft.connect(owner).setApprovalForAll(owner.address, true)
+        tnft.connect(owner).setApprovalForAll(owner.address, true),
       ).to.be.revertedWithCustomError(tnft, "ERC721InvalidOperator");
     });
 
     it("Should pass if the operator has been approved", async function () {
       const { tnft, account1, account2 } = await loadFixture(deployTnftFixture);
 
-      await expect(
-        tnft.connect(account1).setApprovalForAll(account2.address, true)
-      );
+      await expect(tnft.connect(account1).setApprovalForAll(account2.address, true));
     });
 
     it("should fail if zero address is used as operator", async function () {
       const { tnft, owner } = await loadFixture(deployTnftFixture);
 
       await expect(
-        tnft.connect(owner).setApprovalForAll(ZERO_ADDRESS, true)
+        tnft.connect(owner).setApprovalForAll(ZERO_ADDRESS, true),
       ).to.be.revertedWithCustomError(tnft, "ERC721InvalidOperator");
     });
 
     it("Should pass if the operator has been approved", async function () {
-      const { tnft, owner, account1, account2 } = await loadFixture(
-        deployTnftFixture
-      );
+      const { tnft, owner, account1, account2 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).setApprovalForAll(account1.address, true);
       await tnft.connect(account1).setApprovalForAll(account2.address, true);
-      expect(await tnft.isApprovedForAll(account1.address, account2.address)).to
-        .be.true;
+      expect(await tnft.isApprovedForAll(account1.address, account2.address)).to.be.true;
     });
   });
 
@@ -262,9 +250,7 @@ describe("Tnft", function () {
       const { tnft, owner } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
-      expect(await tnft.tokenURI(BigInt(1))).to.equal(
-        "https://example.com/api/1"
-      );
+      expect(await tnft.tokenURI(BigInt(1))).to.equal("https://example.com/api/1");
     });
   });
 
@@ -273,9 +259,7 @@ describe("Tnft", function () {
       const { tnft, owner, account1 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
-      await tnft
-        .connect(owner)
-        .transferFrom(owner.address, account1.address, BigInt(1));
+      await tnft.connect(owner).transferFrom(owner.address, account1.address, BigInt(1));
       expect(await tnft.balanceOf(account1.address)).to.equal(BigInt(1));
       expect(await tnft.balanceOf(owner.address)).to.equal(BigInt(0));
     });
@@ -284,11 +268,7 @@ describe("Tnft", function () {
       const { tnft, owner, account1 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
-      await expect(
-        tnft
-          .connect(owner)
-          .transferFrom(owner.address, account1.address, BigInt(1))
-      )
+      await expect(tnft.connect(owner).transferFrom(owner.address, account1.address, BigInt(1)))
         .to.emit(tnft, "Transfer")
         .withArgs(owner.address, account1.address, BigInt(1));
     });
@@ -297,22 +277,16 @@ describe("Tnft", function () {
       const { tnft, owner, account1 } = await loadFixture(deployTnftFixture);
 
       await expect(
-        tnft
-          .connect(owner)
-          .transferFrom(owner.address, account1.address, BigInt(1))
+        tnft.connect(owner).transferFrom(owner.address, account1.address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721NonexistentToken");
     });
 
     it("should fail if the sender is not approved", async function () {
-      const { tnft, owner, account1, account2 } = await loadFixture(
-        deployTnftFixture
-      );
+      const { tnft, owner, account1, account2 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await expect(
-        tnft
-          .connect(account1)
-          .transferFrom(owner.address, account2.address, BigInt(1))
+        tnft.connect(account1).transferFrom(owner.address, account2.address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721InsufficientApproval");
     });
 
@@ -321,49 +295,37 @@ describe("Tnft", function () {
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await expect(
-        tnft.connect(owner).transferFrom(owner.address, ZERO_ADDRESS, BigInt(1))
+        tnft.connect(owner).transferFrom(owner.address, ZERO_ADDRESS, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721InvalidReceiver");
     });
 
     it("should send token by spender with approval", async function () {
-      const { tnft, owner, account1, account2 } = await loadFixture(
-        deployTnftFixture
-      );
+      const { tnft, owner, account1, account2 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await tnft.connect(owner).approve(account1.address, BigInt(1));
-      await tnft
-        .connect(account1)
-        .transferFrom(owner.address, account2.address, BigInt(1));
+      await tnft.connect(account1).transferFrom(owner.address, account2.address, BigInt(1));
       expect(await tnft.balanceOf(account2.address)).to.equal(BigInt(1));
       expect(await tnft.balanceOf(owner.address)).to.equal(BigInt(0));
     });
 
     it("should send token by operator with all approvals", async function () {
-      const { tnft, owner, account1, account2 } = await loadFixture(
-        deployTnftFixture
-      );
+      const { tnft, owner, account1, account2 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await tnft.connect(owner).setApprovalForAll(account1.address, true);
-      await tnft
-        .connect(account1)
-        .transferFrom(owner.address, account2.address, BigInt(1));
+      await tnft.connect(account1).transferFrom(owner.address, account2.address, BigInt(1));
       expect(await tnft.balanceOf(account2.address)).to.equal(BigInt(1));
       expect(await tnft.balanceOf(owner.address)).to.equal(BigInt(0));
     });
 
     it("should fail if the sender is not approved and not operator", async function () {
-      const { tnft, owner, account1, account2 } = await loadFixture(
-        deployTnftFixture
-      );
+      const { tnft, owner, account1, account2 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       await tnft.connect(owner).approve(account1.address, BigInt(1));
       await expect(
-        tnft
-          .connect(account2)
-          .transferFrom(owner.address, account1.address, BigInt(1))
+        tnft.connect(account2).transferFrom(owner.address, account1.address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721InsufficientApproval");
     });
   });
@@ -373,9 +335,7 @@ describe("Tnft", function () {
       const { tnft, owner, account1 } = await loadFixture(deployTnftFixture);
 
       await tnft.connect(owner).mint(owner.address, BigInt(1));
-      await tnft
-        .connect(owner)
-        .safeTransferFrom(owner.address, account1.address, BigInt(1));
+      await tnft.connect(owner).safeTransferFrom(owner.address, account1.address, BigInt(1));
       expect(await tnft.balanceOf(account1.address)).to.equal(BigInt(1));
       expect(await tnft.balanceOf(owner.address)).to.equal(BigInt(0));
     });
@@ -386,7 +346,7 @@ describe("Tnft", function () {
       await tnft.connect(owner).mint(owner.address, BigInt(1));
       const address = tnft.getAddress();
       await expect(
-        tnft.connect(owner).safeTransferFrom(owner.address, address, BigInt(1))
+        tnft.connect(owner).safeTransferFrom(owner.address, address, BigInt(1)),
       ).to.be.revertedWithCustomError(tnft, "ERC721InvalidReceiver");
     });
   });
