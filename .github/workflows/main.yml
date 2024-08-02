@@ -8,7 +8,7 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Compile, test and analyze ${{ env.LAB2_DIR }}
+    name: Compile, test and analyze
     steps:
       - name: Checkout
         uses: actions/checkout@v3
