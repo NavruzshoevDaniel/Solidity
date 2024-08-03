@@ -20,20 +20,16 @@ jobs:
 
       - name: Install npm deps
         run: npm install --force
-        with:
-          project-path: ${{ env.LAB2_DIR }}
+        working-directory: {{ env.LAB2_DIR }}
 
       - name: Hardhat check
         run: npx hardhat check
-        with:
-          project-path: ${{ env.LAB2_DIR }}
+        working-directory: {{ env.LAB2_DIR }}
 
       - name: Compile
         run: npx hardhat compile
-        with:
-          project-path: ${{ env.LAB2_DIR }}
+        working-directory: {{ env.LAB2_DIR }}
 
       - name: Tests
         run: npx hardhat test
-        with:
-          project-path: ${{ env.LAB2_DIR }}
+        working-directory: {{ env.LAB2_DIR }}
