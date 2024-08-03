@@ -24,11 +24,11 @@ jobs:
       - name: Hardhat check
         run: npx hardhat check
 
-      - name: Lint
-        run: npm run lint:check
-
       - name: Compile
         run: npm run compile
+
+      - name: Lint
+        run: npm run lint:check
 
       - name: Tests
         run: npm run test
