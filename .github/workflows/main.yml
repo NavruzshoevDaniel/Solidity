@@ -24,6 +24,9 @@ jobs:
       - name: Hardhat check
         run: npx hardhat check
 
+      - name: Solhint
+        run: npx solhint "contracts/**/*.sol"
+
       - name: Compile
         run: npx hardhat compile
 
