@@ -2,13 +2,13 @@ name: Smart contracts build
 
 on: [push, workflow_dispatch]
 
-env:
-  LAB2_DIR: "./Lab2_tokens"
-
 jobs:
   build:
     runs-on: ubuntu-latest
     name: Compile, test and analyze
+    defaults:
+      run:
+          working-directory: "./Lab2_tokens"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -20,16 +20,12 @@ jobs:
 
       - name: Install npm deps
         run: npm install --force
-        working-directory: {{ env.LAB2_DIR }}
 
       - name: Hardhat check
         run: npx hardhat check
-        working-directory: {{ env.LAB2_DIR }}
 
       - name: Compile
         run: npx hardhat compile
-        working-directory: {{ env.LAB2_DIR }}
 
       - name: Tests
         run: npx hardhat test
-        working-directory: {{ env.LAB2_DIR }}
