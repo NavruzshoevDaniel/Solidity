@@ -7,11 +7,5 @@ module.exports = {
     grep: '@skip-on-coverage',
     invert: true
   },
-  checkCoverage: true,
-  coverage: {
-    statements: 99,
-    branches: 99,
-    functions: 99,
-    lines: 99,
-  },
+  checkCoverage: true
 };
