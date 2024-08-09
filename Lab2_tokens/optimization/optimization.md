@@ -642,3 +642,96 @@ In summary, while higher optimization runs can provide additional benefits in so
 ### Conclusion:
 The `viaIR` flag in combination with optimization seems to enhance gas efficiency slightly for most contract methods, particularly in reducing deployment costs. However, the impact on method execution times is minimal. The improvements are more pronounced in contract deployment, where gas savings are significant.
 
+## 8. After adding the optimization cache some values from storage, the code is as follows:
+```txt
+·--------------------------------------|---------------------------|----------------|-----------------------------·
+|         Solc version: 0.8.24         ·  Optimizer enabled: true  ·  Runs: 100000  ·  Block limit: 30000000 gas  │
+·······································|···························|················|······························
+|  Methods                                                                                                        │
+·············|·························|·············|·············|················|···············|··············
+|  Contract  ·  Method                 ·  Min        ·  Max        ·  Avg           ·  # calls      ·  usd (avg)  │
+·············|·························|·············|·············|················|···············|··············
+|  TGame     ·  burn                   ·          -  ·          -  ·         32364  ·            7  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TGame     ·  burnBatch              ·      34706  ·      41199  ·         38602  ·            5  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TGame     ·  mint                   ·      31855  ·      48967  ·         48374  ·           29  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TGame     ·  mintBatch              ·          -  ·          -  ·         74976  ·            3  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TGame     ·  safeBatchTransferFrom  ·      35332  ·      87272  ·         69939  ·            6  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TGame     ·  safeTransferFrom       ·      28888  ·      56088  ·         46983  ·            6  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TGame     ·  setApprovalForAll      ·          -  ·          -  ·         46184  ·            5  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TMoney    ·  approve                ·      45874  ·      45886  ·         45875  ·            9  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TMoney    ·  burn                   ·          -  ·          -  ·         33562  ·            3  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TMoney    ·  mint                   ·          -  ·          -  ·         36067  ·            3  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TMoney    ·  transfer               ·      28586  ·      51298  ·         45620  ·            4  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  TMoney    ·  transferFrom           ·          -  ·          -  ·         52099  ·            3  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  Tnft      ·  approve                ·      48275  ·      50593  ·         48606  ·            7  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  Tnft      ·  burn                   ·          -  ·          -  ·         28760  ·            3  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  Tnft      ·  mint                   ·          -  ·          -  ·         70651  ·           25  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  Tnft      ·  safeTransferFrom       ·          -  ·          -  ·         55178  ·            1  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  Tnft      ·  setApprovalForAll      ·      24363  ·      46275  ·         43839  ·            9  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  Tnft      ·  transferFrom           ·      52389  ·      56858  ·         53737  ·            5  ·          -  │
+·············|·························|·············|·············|················|···············|··············
+|  Deployments                         ·                                            ·  % of limit   ·             │
+·······································|·············|·············|················|···············|··············
+|  TGame                               ·          -  ·          -  ·       1641801  ·        5.5 %  ·          -  │
+·······································|·············|·············|················|···············|··············
+|  TMoney                              ·          -  ·          -  ·        794722  ·        2.6 %  ·          -  │
+·······································|·············|·············|················|···············|··············
+|  Tnft                                ·          -  ·          -  ·       1416977  ·        4.7 %  ·          -  │
+·--------------------------------------|-------------|-------------|----------------|---------------|-------------·
+```
+## Conclusion 7->8:
+
+Here’s a comparison of the two implementations (7th and 8th) in a table format, followed by key observations and conclusions.
+
+### Table: Gas Consumption Comparison
+
+| Contract | Method                   | 7th Implementation Avg Gas | 8th Implementation Avg Gas | Difference (Δ Avg) | Difference (%)  |
+|----------|--------------------------|----------------------------|----------------------------|--------------------|-----------------|
+| TGame    | burn                      | 32,466                     | 32,364                     | -102               | -0.31%           |
+| TGame    | burnBatch                 | 38,869                     | 38,602                     | -267               | -0.69%           |
+| TGame    | mint                      | 48,374                     | 48,374                     | 0                  | 0.00%            |
+| TGame    | mintBatch                 | 74,976                     | 74,976                     | 0                  | 0.00%            |
+| TGame    | safeBatchTransferFrom     | 70,143                     | 69,939                     | -204               | -0.29%           |
+| TGame    | safeTransferFrom          | 47,085                     | 46,983                     | -102               | -0.22%           |
+| TGame    | setApprovalForAll         | 46,184                     | 46,184                     | 0                  | 0.00%            |
+| TMoney   | approve                   | 45,875                     | 45,875                     | 0                  | 0.00%            |
+| TMoney   | burn                      | 33,669                     | 33,562                     | -107               | -0.32%           |
+| TMoney   | mint                      | 36,067                     | 36,067                     | 0                  | 0.00%            |
+| TMoney   | transfer                  | 45,737                     | 45,620                     | -117               | -0.26%           |
+| TMoney   | transferFrom              | 52,315                     | 52,099                     | -216               | -0.41%           |
+| Tnft     | approve                   | 48,606                     | 48,606                     | 0                  | 0.00%            |
+| Tnft     | burn                      | 28,760                     | 28,760                     | 0                  | 0.00%            |
+| Tnft     | mint                      | 70,651                     | 70,651                     | 0                  | 0.00%            |
+| Tnft     | safeTransferFrom          | 55,178                     | 55,178                     | 0                  | 0.00%            |
+| Tnft     | setApprovalForAll         | 43,839                     | 43,839                     | 0                  | 0.00%            |
+| Tnft     | transferFrom              | 53,737                     | 53,737                     | 0                  | 0.00%            |
+| Deployments | TGame                  | 1,623,534                  | 1,641,801                  | +18,267            | +1.13%           |
+| Deployments | TMoney                 | 797,086                    | 794,722                    | -2,364             | -0.30%           |
+| Deployments | Tnft                   | 1,416,977                  | 1,416,977                  | 0                  | 0.00%            |
+
+### Key Observations:
+1. **Minimal Gas Reduction**: The gas usage differences between the 7th and 8th implementations are minimal across most methods, with reductions ranging from 0.22% to 0.69%. This indicates that caching some storage values resulted in slight improvements in efficiency for some methods.
+
+2. **No Change in Some Methods**: Some methods, such as `mint`, `mintBatch`, `approve`, `burn` in `Tnft`, and others, show no difference in gas usage between the two implementations, indicating that the optimization had no impact on these specific methods.
+
+3. **Deployment Size**: The deployment gas consumption for `TGame` increased by 1.13%, likely due to the added logic for caching. Meanwhile, the deployment size for `TMoney` slightly decreased by 0.30%.
+
+### Conclusion:
+The optimization by caching some values from storage led to very slight reductions in gas consumption for certain functions, but the impact was relatively minor. In some cases, this optimization slightly increased the overall deployment gas costs. These changes suggest that while caching can improve efficiency, the benefits might be marginal and should be weighed against potential increases in code complexity or deployment size.
