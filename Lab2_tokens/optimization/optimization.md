@@ -830,3 +830,47 @@ Here's a comparison of the optimization results for versions 8 and 9, including 
 - **Overall Impact:** Adding unchecked math has generally resulted in minor reductions in gas costs across methods, with average changes ranging from -0.07% to -0.99%. This indicates a marginal but positive impact on gas efficiency from the optimization techniques in version 9.
 
 Thus, the addition of unchecked math provides a modest improvement in gas efficiency without introducing any substantial drawbacks in the tested scenarios.
+
+## Final Conclusion:
+
+Here's a comparative analysis of the smart contract methods before and after optimization, presented in table format:
+
+### **Pre-Optimization vs. Post-Optimization Comparison**
+
+| Contract | Method                  | Pre-Optimization Avg (gas) | Post-Optimization Avg (gas) | Difference (gas) | Percentage Reduction (%) |
+|----------|-------------------------|----------------------------|------------------------------|------------------|---------------------------|
+| TGame    | burn                    | 33475                      | 32309                        | -1176            | -3.51%                    |
+| TGame    | burnBatch               | 39720                      | 38392                        | -1328            | -3.35%                    |
+| TGame    | mint                    | 49428                      | 48420                        | -1008            | -2.04%                    |
+| TGame    | mintBatch               | 75924                      | 74976                        | -1948            | -2.56%                    |
+| TGame    | safeBatchTransferFrom   | 71709                      | 69829                        | -1880            | -2.62%                    |
+| TGame    | safeTransferFrom        | 48504                      | 46928                        | -1580            | -3.26%                    |
+| TGame    | setApprovalForAll       | 46766                      | 46184                        | -582             | -1.24%                    |
+| TMoney   | approve                 | 46664                      | 45875                        | -789             | -1.69%                    |
+| TMoney   | burn                    | 34403                      | 33507                        | -896             | -2.60%                    |
+| TMoney   | mint                    | 37040                      | 36067                        | -973             | -2.63%                    |
+| TMoney   | transfer                | 46838                      | 45565                        | -1273            | -2.72%                    |
+| TMoney   | transferFrom            | 53813                      | 52044                        | -1769            | -3.29%                    |
+| Tnft     | approve                 | 49115                      | 48606                        | -509             | -1.04%                    |
+| Tnft     | burn                    | 29294                      | 28719                        | -575             | -1.96%                    |
+| Tnft     | mint                    | 71383                      | 70599                        | -784             | -1.10%                    |
+| Tnft     | safeTransferFrom        | 56079                      | 55074                        | -1005            | -1.79%                    |
+| Tnft     | setApprovalForAll       | 44418                      | 43839                        | -579             | -1.30%                    |
+| Tnft     | transferFrom            | 54680                      | 53633                        | -1047            | -1.91%                    |
+| **Deployments** |                   |                            |                              |                  |                           |
+| TGame    | Deployment              | 2471491                    | 1631640                      | -839851          | -34.0%                    |
+| TMoney   | Deployment              | 1196794                    | 790166                       | -406628          | -33.9%                    |
+| Tnft     | Deployment              | 1943185                    | 1402823                      | -540362          | -27.8%                    |
+
+### **Summary and Conclusions**
+
+1. **Method Gas Usage:**
+    - The average gas consumption for most methods has been reduced by a small but notable percentage after optimization. The reductions range from approximately 1% to 4%, with the highest reduction seen in the `transferFrom` method of `TMoney` at -3.29%.
+
+2. **Deployment Costs:**
+    - Deployment gas costs have seen significant reductions. `TGame`'s deployment gas decreased by 34.0%, `TMoney`'s by 33.9%, and `Tnft`'s by 27.8%. These reductions indicate substantial optimization benefits in deployment efficiency.
+
+3. **Overall Efficiency:**
+    - The optimizations generally lead to gas savings, improving efficiency for both transaction execution and contract deployment. The reductions, while varying, suggest that the optimizer has had a positive impact across the board.
+
+In conclusion, the optimization has successfully reduced gas costs for method executions and contract deployments, resulting in more efficient smart contracts.
