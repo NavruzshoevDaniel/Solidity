@@ -56,7 +56,10 @@ contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
         if (balance < amount) {
             revert IERC1155Errors.ERC1155InsufficientBalance(from, balance, amount, id);
         }
-        _balances[id][from] = balance - amount;
+        unchecked {
+            // can safely assume that balance is greater than amount cause of the above check
+            _balances[id][from] = balance - amount;
+        }
         emit TransferSingle(msg.sender, from, address(0), id, amount);
     }
 
@@ -72,10 +75,13 @@ contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
             uint256 id = ids[i];
             uint256 balance = _balances[id][from];
             uint256 amount = amounts[i];
-            if (balance < amounts[i]) {
+            if (balance < amount) {
                 revert IERC1155Errors.ERC1155InsufficientBalance(from, balance, amount, id);
             }
-            _balances[id][from] = balance - amount;
+            unchecked {
+                // can safely assume that balance is greater than amount cause of the above check
+                _balances[id][from] = balance - amount;
+            }
         }
         emit TransferBatch(msg.sender, from, address(0), ids, amounts);
     }
@@ -170,7 +176,10 @@ contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
         if (!_isAuthorized(from, msg.sender)) {
             revert IERC1155Errors.ERC1155MissingApprovalForAll(msg.sender, from);
         }
-        _balances[id][from] = balance - amount;
+        unchecked {
+            // can safely assume that balance is greater than amount cause of the above check
+            _balances[id][from] = balance - amount;
+        }
         _balances[id][to] += amount;
     }
 
