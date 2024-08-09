@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/token/ERC1155/IERC1155Receiver.sol";
 contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
     string public constant baseURI = "https://example.com/api/";
 
-    mapping(uint32 tokenId => mapping(address owner => uint256 amount)) private _balances;
+    mapping(uint256 tokenId => mapping(address owner => uint256 amount)) private _balances;
     mapping(address owner => mapping(address operator => bool approved)) private _operatorApprovals;
 
     constructor() Ownable(msg.sender) {}
