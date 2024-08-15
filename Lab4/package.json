@@ -1,0 +1,29 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@eslint/js": "^9.9.0",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "eslint": "^9.9.0",
+    "globals": "^15.9.0",
+    "hardhat": "^2.22.8",
+    "solhint": "^5.0.3",
+    "typescript-eslint": "^8.1.0",
+    "prettier": "^3.3.3"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2"
+  },
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "lint:check": "solhint 'contracts/**/*.sol' && prettier --check ./test ./ignition/modules && eslint .",
+    "lint:fix": "solhint --fix 'contracts/**/*.sol' && prettier --write ./test ./ignition/modules && eslint .",
+    "eslint": "eslint .",
+    "prettier": "prettier --write ./test ./ignition/modules",
+    "prettier:check": "prettier --check ./test ./ignition/modules",
+    "solhint": "solhint 'contracts/**/*.sol'",
+    "solhint:fix": "solhint --fix 'contracts/**/*.sol'",
+    "coverage": "hardhat coverage --solcoverjs .solcover.cjs",
+    "coverage:check": "npx hardhat coverage --solcoverjs .solcover.cjs && npx istanbul check-coverage --statements 90 --branches 80 --functions 90 --lines 90"
+  }
+}

@@ -5,7 +5,7 @@ on: [push, workflow_dispatch]
 jobs:
   build-lab2:
     runs-on: ubuntu-latest
-    name: Compile, test and analyze
+    name: Compile, test and analyze - Lab2
     defaults:
       run:
         working-directory: "./Lab2_tokens"
@@ -37,10 +37,42 @@ jobs:
         run: npm run coverage:check
   build-lab3:
     runs-on: ubuntu-latest
-    name: Compile, test and analyze
+    name: Compile, test and analyze - Lab3
     defaults:
       run:
         working-directory: "./Lab3"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20.x
+
+      - name: Install npm deps
+        run: npm install --force
+
+      - name: Hardhat check
+        run: npx hardhat check
+
+      - name: Compile
+        run: npm run compile
+
+      - name: Lint
+        run: npm run lint:check
+
+      - name: Tests
+        run: npm run test
+
+      - name: Coverage
+        run: npm run coverage:check
+  build-lab4:
+    runs-on: ubuntu-latest
+    name: Compile, test and analyze - Lab4
+    defaults:
+      run:
+        working-directory: "./Lab4"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
