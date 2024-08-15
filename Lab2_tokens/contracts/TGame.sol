@@ -35,14 +35,14 @@ contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
     }
 
     function mintBatch(address to, uint256[] calldata ids, uint256[] calldata amounts) external onlyOwner {
-        if (ids.length != amounts.length) {
-            revert IERC1155Errors.ERC1155InvalidArrayLength(ids.length, amounts.length);
+        uint256 idsLength = ids.length;
+        if (idsLength != amounts.length) {
+            revert IERC1155Errors.ERC1155InvalidArrayLength(idsLength, amounts.length);
         }
         if (to == address(0)) {
             revert IERC1155Errors.ERC1155InvalidReceiver(to);
         }
-        uint256 length = ids.length;
-        for (uint256 i = 0; i < length; ++i) {
+        for (uint256 i = 0; i < idsLength; ++i) {
             _balances[ids[i]][to] += amounts[i];
         }
         emit TransferBatch(msg.sender, address(0), to, ids, amounts);
@@ -56,24 +56,32 @@ contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
         if (balance < amount) {
             revert IERC1155Errors.ERC1155InsufficientBalance(from, balance, amount, id);
         }
-        _balances[id][from] -= amount;
+        unchecked {
+            // can safely assume that balance is greater than amount cause of the above check
+            _balances[id][from] = balance - amount;
+        }
         emit TransferSingle(msg.sender, from, address(0), id, amount);
     }
 
     function burnBatch(address from, uint256[] calldata ids, uint256[] calldata amounts) external onlyOwner {
-        if (ids.length != amounts.length) {
-            revert IERC1155Errors.ERC1155InvalidArrayLength(ids.length, amounts.length);
+        uint256 idsLength = ids.length;
+        if (idsLength != amounts.length) {
+            revert IERC1155Errors.ERC1155InvalidArrayLength(idsLength, amounts.length);
         }
         if (from == address(0)) {
             revert IERC1155Errors.ERC1155InvalidSender(from);
         }
-        uint256 length = ids.length;
-        for (uint256 i = 0; i < length; ++i) {
-            uint256 balance = _balances[ids[i]][from];
-            if (balance < amounts[i]) {
-                revert IERC1155Errors.ERC1155InsufficientBalance(from, balance, amounts[i], ids[i]);
+        for (uint256 i = 0; i < idsLength; ++i) {
+            uint256 id = ids[i];
+            uint256 balance = _balances[id][from];
+            uint256 amount = amounts[i];
+            if (balance < amount) {
+                revert IERC1155Errors.ERC1155InsufficientBalance(from, balance, amount, id);
             }
-            _balances[ids[i]][from] -= amounts[i];
+            unchecked {
+                // can safely assume that balance is greater than amount cause of the above check
+                _balances[id][from] = balance - amount;
+            }
         }
         emit TransferBatch(msg.sender, from, address(0), ids, amounts);
     }
@@ -87,10 +95,10 @@ contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
         address[] calldata accounts,
         uint256[] calldata ids
     ) external view override returns (uint256[] memory) {
-        if (accounts.length != ids.length) {
-            revert IERC1155Errors.ERC1155InvalidArrayLength(ids.length, accounts.length);
-        }
         uint256 length = accounts.length;
+        if (length != ids.length) {
+            revert IERC1155Errors.ERC1155InvalidArrayLength(ids.length, length);
+        }
         uint256[] memory batchBalances = new uint256[](length);
         for (uint256 i = 0; i < length; ++i) {
             batchBalances[i] = _balances[ids[i]][accounts[i]];
@@ -138,8 +146,9 @@ contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
         uint256[] calldata amounts,
         bytes calldata data
     ) external override {
-        if (ids.length != amounts.length) {
-            revert IERC1155Errors.ERC1155InvalidArrayLength(ids.length, amounts.length);
+        uint256 idsLength = ids.length;
+        if (idsLength != amounts.length) {
+            revert IERC1155Errors.ERC1155InvalidArrayLength(idsLength, amounts.length);
         }
         if (from == address(0)) {
             revert IERC1155Errors.ERC1155InvalidSender(from);
@@ -147,7 +156,7 @@ contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
         if (to == address(0)) {
             revert IERC1155Errors.ERC1155InvalidReceiver(to);
         }
-        for (uint256 i = 0; i < ids.length; ++i) {
+        for (uint256 i = 0; i < idsLength; ++i) {
             _transferFrom(from, to, ids[i], amounts[i]);
         }
         emit TransferBatch(msg.sender, from, to, ids, amounts);
@@ -167,7 +176,10 @@ contract TGame is IERC1155, Ownable, IERC1155MetadataURI {
         if (!_isAuthorized(from, msg.sender)) {
             revert IERC1155Errors.ERC1155MissingApprovalForAll(msg.sender, from);
         }
-        _balances[id][from] -= amount;
+        unchecked {
+            // can safely assume that balance is greater than amount cause of the above check
+            _balances[id][from] = balance - amount;
+        }
         _balances[id][to] += amount;
     }
 

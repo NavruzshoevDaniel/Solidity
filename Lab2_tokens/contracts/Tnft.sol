@@ -57,7 +57,9 @@ contract Tnft is IERC721, Ownable, IERC721Metadata {
             revert ERC721ExistingToken(tokenId);
         }
         _tokenOwners[tokenId] = to;
-        _balances[to] += 1;
+        unchecked {
+            _balances[to] += 1;
+        }
         emit Transfer(address(0), to, tokenId);
     }
 
@@ -67,7 +69,9 @@ contract Tnft is IERC721, Ownable, IERC721Metadata {
             revert IERC721Errors.ERC721NonexistentToken(tokenId);
         }
         _tokenOwners[tokenId] = address(0);
-        _balances[owner] -= 1;
+        unchecked {
+            _balances[owner] -= 1;
+        }
         emit Transfer(owner, address(0), tokenId);
     }
 
@@ -104,8 +108,10 @@ contract Tnft is IERC721, Ownable, IERC721Metadata {
             revert IERC721Errors.ERC721InsufficientApproval(msg.sender, tokenId);
         }
         _tokenOwners[tokenId] = to;
-        _balances[from] -= 1;
-        _balances[to] += 1;
+        unchecked {
+            _balances[from] -= 1;
+            _balances[to] += 1;
+        }
         emit Transfer(from, to, tokenId);
     }
 

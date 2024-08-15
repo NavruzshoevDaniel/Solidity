@@ -27,7 +27,10 @@ contract TMoney is IERC20, Ownable {
         if (to == address(0)) {
             revert IERC20Errors.ERC20InvalidReceiver(to);
         }
-        balanceOf[msg.sender] -= value;
+        unchecked {
+            // can safely assume that balance is greater than value cause of the above check
+            balanceOf[msg.sender] = balance - value;
+        }
         balanceOf[to] += value;
         emit Transfer(msg.sender, to, value);
         return true;
@@ -58,9 +61,12 @@ contract TMoney is IERC20, Ownable {
         if (senderAllowanceAmount < value) {
             revert IERC20Errors.ERC20InsufficientAllowance(msg.sender, senderAllowanceAmount, value);
         }
-        balanceOf[from] -= value;
+        unchecked {
+            // can safely assume that balance is greater than value cause of the above check
+            balanceOf[from] = balance - value;
+        }
         balanceOf[to] += value;
-        allowances[from][msg.sender] -= value;
+        allowances[from][msg.sender] = senderAllowanceAmount - value;
         emit Transfer(from, to, value);
         return true;
     }
@@ -79,7 +85,10 @@ contract TMoney is IERC20, Ownable {
         if (balance < value) {
             revert IERC20Errors.ERC20InsufficientBalance(msg.sender, balance, value);
         }
-        balanceOf[msg.sender] -= value;
+        unchecked {
+            // can safely assume that balance is greater than value cause of the above check
+            balanceOf[msg.sender] = balance - value;
+        }
         totalSupply -= value;
         emit Transfer(msg.sender, address(0), value);
     }
