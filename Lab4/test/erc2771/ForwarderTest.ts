@@ -9,8 +9,8 @@ const version = "1";
 describe("ERC2771Forwarder", function () {
   async function deployForwarderFixture() {
     const [owner, account1, account2] = await hre.ethers.getSigners();
-    const ERC2771Forwarder = await hre.ethers.getContractFactory("ERC2771Forwarder");
-    const forwarderContract = await ERC2771Forwarder.deploy(name, version);
+    const ERC2771Forwarder2 = await hre.ethers.getContractFactory("ERC2771Forwarder2");
+    const forwarderContract = await ERC2771Forwarder2.deploy(name);
 
     const ERC2771ContextMock = await hre.ethers.getContractFactory("ERC2771ContextMock");
     const erc2771Context = await ERC2771ContextMock.deploy(forwarderContract);
@@ -35,14 +35,18 @@ describe("ERC2771Forwarder", function () {
       await loadFixture(deployForwarderFixture);
     const nonce = await forwarderContract.nonces(account1.address);
     console.log("nonce", nonce);
+    const data = "0x";
+    const hashedData = ethers.keccak256(
+      ethers.AbiCoder.defaultAbiCoder().encode(["bytes"], [data]),
+    );
     const request = {
       from: account1.address,
-      to: await erc2771Context.getAddress(),
+      to: ethers.ZeroAddress,
       value: ethers.parseEther("1"),
       gas: 1000000n,
       nonce: nonce,
       deadline: Math.floor(Date.parse("2025-01-01") / 1000),
-      data: "0x",
+      data: hashedData,
     };
 
     const signature = await account1.signTypedData(
@@ -72,7 +76,7 @@ describe("ERC2771Forwarder", function () {
         value: request.value,
         gas: request.gas,
         deadline: request.deadline,
-        data: request.data,
+        data: hashedData,
         signature: signature,
       }),
     ).to.be.equal(account1.address);
