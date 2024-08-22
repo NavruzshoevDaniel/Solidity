@@ -2,8 +2,9 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/access/IAccessControl.sol";
+import "@openzeppelin/contracts/utils/Context.sol";
 
-abstract contract AccessControl is IAccessControl {
+abstract contract AccessControl is IAccessControl, Context {
 
     struct RoleData {
         mapping(address => bool) hasRole;
@@ -32,7 +33,7 @@ abstract contract AccessControl is IAccessControl {
     }
 
     function _checkRole(bytes32 role) internal view virtual {
-        _checkRole(role, msg.sender);
+        _checkRole(role, _msgSender());
     }
 
     function _checkRole(bytes32 role, address account) internal view virtual {
@@ -50,7 +51,7 @@ abstract contract AccessControl is IAccessControl {
             return;
         }
         _roles[role].hasRole[account] = true;
-        emit RoleGranted(role, account, msg.sender);
+        emit RoleGranted(role, account, _msgSender());
     }
 
     function revokeRole(bytes32 role, address account) public virtual onlyRole(getRoleAdmin(role)) {
@@ -58,7 +59,7 @@ abstract contract AccessControl is IAccessControl {
     }
 
     function renounceRole(bytes32 role, address callerConfirmation) public virtual {
-        if (callerConfirmation != msg.sender) {
+        if (callerConfirmation != _msgSender()) {
             revert AccessControlBadConfirmation();
         }
         _revokeRole(role, callerConfirmation);
@@ -69,7 +70,7 @@ abstract contract AccessControl is IAccessControl {
             return;
         }
         _roles[role].hasRole[account] = false;
-        emit RoleRevoked(role, account, msg.sender);
+        emit RoleRevoked(role, account, _msgSender());
     }
 
     function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {

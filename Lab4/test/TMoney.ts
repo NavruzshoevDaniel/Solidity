@@ -6,7 +6,12 @@ describe("TMoney v2", function () {
   async function deployTMoneyFixture() {
     const [owner, account1, account2, account3] = await hre.ethers.getSigners();
     const TMoney = await hre.ethers.getContractFactory("TMoney");
-    const tMoney = await TMoney.deploy(BigInt(1_000_000_000_000_000_000n));
+    const ERC2771Forwarder = await hre.ethers.getContractFactory("ERC2771Forwarder");
+    const forwarderContract = await ERC2771Forwarder.deploy("Test Forwarder", "v1.0.0");
+    const tMoney = await TMoney.deploy(
+      BigInt(1_000_000_000_000_000_000n),
+      await forwarderContract.getAddress(),
+    );
     return { tMoney, owner, account1, account2, account3 };
   }
 
