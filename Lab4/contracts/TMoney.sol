@@ -6,15 +6,16 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "./AccessControl.sol";
 import "./erc2771/ERC2771Context.sol";
+import "./permit/Permit.sol";
 
-contract TMoney is ERC2771Context, ERC20, Ownable, AccessControl, ERC20Burnable {
+contract TMoney is ERC2771Context, Permit, Ownable, AccessControl, ERC20Burnable {
     bytes32 public constant MINTER_ROLE = keccak256(abi.encodePacked("MINTER_ROLE"));
     bytes32 public constant BURNER_ROLE = keccak256(abi.encodePacked("BURNER_ROLE"));
 
     constructor(
         uint256 initialTotalSupply,
         address trustedForwarder
-    ) ERC20("TMoney", "TMNY") Ownable(_msgSender()) ERC2771Context(trustedForwarder) {
+    ) ERC20("TMoney", "TMNY") Ownable(_msgSender()) ERC2771Context(trustedForwarder) Permit("TMoney", "1"){
         address msgSender = _msgSender();
         _mint(msgSender, initialTotalSupply);
         _grantRole(DEFAULT_ADMIN_ROLE, msgSender);
