@@ -132,5 +132,6 @@ describe("Permit", function () {
     expect(await tokenWithPermit.allowance(account1.address, account2.address)).to.equal(
       ethers.parseEther("1"),
     );
+    expect(await tokenWithPermit.nonces(account1.address)).to.equal(BigInt(1));
   });
 });

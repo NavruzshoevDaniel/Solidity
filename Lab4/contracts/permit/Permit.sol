@@ -66,6 +66,7 @@ abstract contract Permit is ERC20, IERC20Permit {
         if (signer != owner) {
             revert ERC2612InvalidSigner(signer, owner);
         }
+        nonces[owner]++;
         _approve(owner, spender, value);
     }
 
