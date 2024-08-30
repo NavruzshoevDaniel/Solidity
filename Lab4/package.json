@@ -3,15 +3,17 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/hardhat-upgrades": "^3.2.1",
     "eslint": "^9.9.0",
     "globals": "^15.9.0",
     "hardhat": "^2.22.8",
+    "prettier": "^3.3.3",
     "solhint": "^5.0.3",
-    "typescript-eslint": "^8.1.0",
-    "prettier": "^3.3.3"
+    "typescript-eslint": "^8.1.0"
   },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.0.2"
+    "@openzeppelin/contracts": "^5.0.2",
+    "@openzeppelin/contracts-upgradeable": "^5.0.2"
   },
   "scripts": {
     "compile": "hardhat compile",
