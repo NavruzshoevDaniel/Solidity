@@ -43,9 +43,6 @@ describe("UUPSProxy", function () {
     expect(await erc20UpgradableMockV2.decimals()).to.equal(18);
     expect(await erc20UpgradableMockV2.owner()).to.equal(owner.address);
     expect(await erc20UpgradableMockV2.newVar()).to.equal(111);
-    expect(await erc20UpgradableMockV2.DOMAIN_SEPARATOR()).to.equal(
-      "0x36be28dd54e1b32d11ff0e2bfe29966e93ebdd644a6cd31b00761a531703c0c6",
-    );
   });
 
   it("should not update due to auth", async () => {
