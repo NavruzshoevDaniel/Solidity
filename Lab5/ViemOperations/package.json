@@ -1,0 +1,12 @@
+{
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "viem": "^2.21.14"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.2"
+  },
+  "scripts": {
+    "run": "npx ts-node main.ts"
+  }
+}
