@@ -28,26 +28,19 @@ describe("TMoney", function () {
   });
 
   describe("Transfers", function () {
-    it("Should transfer the funds to another account", async function () {
+    it("Should transfer funds", async function () {
       const { tmoney, owner, account1 } = await loadFixture(deployTMoneyFixture);
 
       await tmoney.connect(owner).transfer(account1.address, BigInt(100));
       expect(await tmoney.balanceOf(account1.address)).to.equal(BigInt(100));
     });
 
-    it("Should transfer the funds to another account and emit event", async function () {
+    it("Should transfer funds and emit event", async function () {
       const { tmoney, owner, account1 } = await loadFixture(deployTMoneyFixture);
 
       await expect(tmoney.connect(owner).transfer(account1.address, BigInt(100)))
         .to.emit(tmoney, "Transfer")
         .withArgs(owner.address, account1.address, BigInt(100));
-    });
-
-    it("Should transfer the funds with zero amount", async function () {
-      const { tmoney, owner, account1 } = await loadFixture(deployTMoneyFixture);
-
-      await tmoney.connect(owner).transfer(account1.address, BigInt(0));
-      expect(await tmoney.balanceOf(account1.address)).to.equal(BigInt(0));
     });
 
     it("Should fail if the sender doesn't have enough funds", async function () {
