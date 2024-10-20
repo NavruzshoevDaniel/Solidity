@@ -12,7 +12,6 @@
     "compile": "hardhat compile",
     "test": "hardhat test",
     "deploy-bsc-testnet": "npx hardhat ignition deploy ignition/modules/TCoin.ts --network bsc_testnet --verify",
-    "deploy-zkEVM-testnet": "npx hardhat ignition deploy ignition/modules/TCoin.ts --network polygonZkEVMTestnet --verify",
-    "verify-zkEVM-testnet": "npx hardhat ignition verify chain-2442 --include-unrelated-contracts"
+    "deploy-zkEVM-testnet": "npx hardhat ignition deploy ignition/modules/TCoin.ts --network polygonZkEVMTestnet --verify"
   }
 }
