@@ -11,7 +11,9 @@
   "scripts": {
     "compile": "hardhat compile",
     "test": "hardhat test",
+    "deploy-sepolia-testnet": "npx hardhat ignition deploy ignition/modules/TCoin.ts --network eth_sepolia --verify",
     "deploy-bsc-testnet": "npx hardhat ignition deploy ignition/modules/TCoin.ts --network bsc_testnet --verify",
+    "deploy-bsc-testnet-wtcoin": "npx hardhat ignition deploy ignition/modules/WTCoin.ts --network bsc_testnet --verify",
     "deploy-zkEVM-testnet": "npx hardhat ignition deploy ignition/modules/TCoin.ts --network polygonZkEVMTestnet --verify"
   }
 }

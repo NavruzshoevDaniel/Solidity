@@ -68,8 +68,8 @@ const config: HardhatUserConfig = {
       },
     ],
     apiKey: {
-      eth_mainnet: ETHERSCAN_API_KEY,
-      eth_sepolia: ETHERSCAN_API_KEY,
+      mainnet: ETHERSCAN_API_KEY,
+      sepolia: ETHERSCAN_API_KEY,
       bscTestnet: BSCSCAN_API_KEY,
       polygonZkEVMTestnet: POLYGONSCAN_API_KEY,
     },
