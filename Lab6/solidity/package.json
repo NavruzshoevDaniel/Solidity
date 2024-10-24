@@ -1,0 +1,19 @@
+{
+  "name": "hardhat-project",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.13"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.1.0",
+    "dotenv": "^16.4.5"
+  },
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy-sepolia-testnet": "npx hardhat ignition deploy ignition/modules/TCoin.ts --network eth_sepolia --verify",
+    "deploy-bsc-testnet": "npx hardhat ignition deploy ignition/modules/TCoin.ts --network bsc_testnet --verify",
+    "deploy-bsc-testnet-wtcoin": "npx hardhat ignition deploy ignition/modules/WTCoin.ts --network bsc_testnet --verify",
+    "deploy-zkEVM-testnet": "npx hardhat ignition deploy ignition/modules/TCoin.ts --network polygonZkEVMTestnet --verify"
+  }
+}
